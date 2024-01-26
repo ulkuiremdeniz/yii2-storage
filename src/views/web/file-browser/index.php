@@ -88,32 +88,87 @@ $viewParams = $isPicker ? [
     'fileExtensions' => $fileExtensions,
 ];
 ?>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-6">
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link active" id="private-tab" data-toggle="tab" href="#private-content">Private</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="public-tab" data-toggle="tab" href="#public-content">Public</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    
-    <div class="row d-flex">
- <div id="private-content" class="tab-content col-md-12">
-<?php
-echo \yii\widgets\ListView::widget([
-        'dataProvider' => $privateDataProvider,
-        'itemView' => '_file',
-        'viewParams' => $viewParams,
-        'options' => [
-            'tag' => 'div',
-            'class' => 'row',
-            'style' => 'overflow-y: auto; height: calc(100vh - 370px);',
-        ],
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .custom-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background-color: #f8f9fa; /* Background color for the nav */
+            display: flex;
+        }
+
+        .nav-item {
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #007bff; /* Link color */
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: #cce5ff; /* Hover color */
+        }
+
+        .nav-link.active {
+            background-color: #007bff; /* Active link color */
+            color: #fff; /* Active link text color */
+            border: 1px solid #fff !important;
+        }
+
+        .nav-link.disabled {
+            color: #6c757d; /* Disabled link color */
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="custom-nav">
+        <li class="nav-item">
+        <a class="active-tab" id="private-tab" href="#private-content">Private</a>
+        </li>
+        <li class="nav-item">
+        <a id="public-tab" href="#public-content">Public</a>
+        </li>
+        
+    </ul>
+</body>
+
+</html>
+
+
+
+    <div class="tab-content">
+        <div id="private-content" class="tab-pane active">
+            <?php
+            echo \yii\widgets\ListView::widget([
+                'dataProvider' => $privateDataProvider,
+                'itemView' => '_file',
+                'viewParams' => $viewParams,
+                'options' => [
+                    'tag' => 'div',
+                    'class' => 'row',
+                    'style' => 'overflow-y: auto; height: calc(100vh - 370px);',
+                ],
         'itemOptions' => $isPicker ?
             function ($model, $key, $index, $widget) use($attributes, $isJson, $name) {
                 if (isset($attributes)) {
@@ -146,7 +201,7 @@ echo \yii\widgets\ListView::widget([
          ?>
 </div>
 
-<div id="public-content" class="tab-content col-md-12" style="display: none;">
+<div id="public-content" class="tab-pane" style="display: none;">
 <?php
 echo \yii\widgets\ListView::widget([
         'dataProvider' => $publicDataProvider,
@@ -188,31 +243,39 @@ echo \yii\widgets\ListView::widget([
         ]);
          ?>
 </div>
-
+</div>
 <script>
-    $(document).ready(function () {
-       
-        $("#private-tab").click(function () {
-            $("#private-content").show();
-            $("#public-content").hide(); 
-            $(".nav-link").removeClass("active");
-            $("#private-tab").addClass("active");
+    document.addEventListener("DOMContentLoaded", function () {
+        var privateTab = document.getElementById("private-tab");
+        var publicTab = document.getElementById("public-tab");
+        var privateContent = document.getElementById("private-content");
+        var publicContent = document.getElementById("public-content");
+
+        privateTab.addEventListener("click", function () {
+            privateContent.style.display = "block";
+            publicContent.style.display = "none";
+            privateTab.classList.add("active-tab");
+            publicTab.classList.remove("active-tab");
         });
 
-        $("#public-tab").click(function () {
-            $("#private-content").hide();
-            $("#public-content").show();
-            $(".nav-link").removeClass("active");
-            $("#public-tab").addClass("active");
-        });
-
-        $(".nav-link").click(function () {
-           
-            $(".nav-link").removeClass("active");
-            $(this).addClass("active");
+        publicTab.addEventListener("click", function () {
+            privateContent.style.display = "none";
+            publicContent.style.display = "block";
+            privateTab.classList.remove("active-tab");
+            publicTab.classList.add("active-tab");
         });
     });
 </script>
+</div>
+
+
+
+
+
+
+
+
+
 <?php
 
 Pjax::end();
